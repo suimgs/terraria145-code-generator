@@ -414,7 +414,7 @@
                     { cn: "多生命树", en: "extra Living Trees", desc: "生命树生成激增，且规模夸张", code: "save the rainforest" },
                     { cn: "多漂浮岛", en: "extra Floating Is lands", desc: "空岛数量暴增", code: "the care bears movie" },
                     { cn: "处处臭臭", en: "poo Everywhere", desc: "整个世界都是便便", code: "truck stop" },
-                    { cn: "宝箱传送枪", en: "portal Gun In Chests", desc: "宝箱里概率包含传送枪", code: "we don't even test for that" },
+                    { cn: "宝箱传送枪", en: "portal Gun In Chests", desc: "宝箱里概率包含传送枪", code: "we dont even test for that" },
                     { cn: "对偶地牢", en: "dual Dungeons", desc: "双地牢，且形成地下城", code: "double daring dangers" }
                 ]
             },
@@ -544,7 +544,9 @@
             
             // 生成输出文本，使用 | 分隔
             const outputText = selectedCodes.join('|');
-            document.getElementById('seed-output').value = outputText;
+            const prefix = '1.1.1.0.';
+            const suffix = '|';
+            document.getElementById('seed-output').value = outputText ? prefix + outputText + suffix : '';
         }
     </script>
 </body>
