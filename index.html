@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰拉瑞亚拼好种</title>
+    <style>
+        :root {
+            --bg-primary: #5A433A;
+            --bg-secondary: #6B5248;
+            --bg-tab: #4A372F;
+            --bg-active: #7C6155;
+            --text-primary: #EAE3D1;
+            --text-secondary: #D4C9B4;
+            --accent: #9C7B68;
+            --accent-light: #B09484;
+            --border: #8B7262;
+            --button-bg: #6B5248;
+            --button-hover: #7C6155;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .tabs-container {
+            margin-bottom: 30px;
+        }
+        
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background-color: var(--bg-tab);
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border-radius: 8px 8px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab:hover {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        
+        .tab.active {
+            background-color: var(--bg-active);
+            color: var(--text-primary);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 0 8px 8px 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .seeds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .seed-item {
+            background-color: var(--bg-primary);
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid var(--accent);
+            transition: all 0.2s ease;
+        }
+        
+        .seed-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .seed-checkbox {
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+        }
+        
+        .seed-checkbox input {
+            margin-right: 12px;
+            margin-top: 5px;
+            cursor: pointer;
+            transform: scale(1.2);
+        }
+        
+        .seed-info h3 {
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+        
+        .seed-info .english-name {
+            color: var(--accent-light);
+            font-style: italic;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .seed-info .description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        
+        .seed-info .code {
+            color: var(--accent);
+            font-family: monospace;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+        
+        .output-container {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border);
+        }
+        
+        .output-container h2 {
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        
+        .output-box {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        #seed-output {
+            flex: 1;
+            padding: 15px;
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 8px 0 0 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: monospace;
+            min-height: 100px;
+            resize: none;
+            overflow-y: auto;
+        }
+        
+        #copy-btn {
+            background-color: var(--button-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            padding: 0 25px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        #copy-btn:hover {
+            background-color: var(--button-hover);
+        }
+        
+        #copy-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .selected-count {
+            color: var(--accent-light);
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: right;
+        }
+        
+        .reference-links {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+        }
+        
+        .reference-links h3 {
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+        
+        .reference-links ul {
+            list-style-type: none;
+        }
+        
+        .reference-links li {
+            margin-bottom: 8px;
+        }
+        
+        .reference-links a {
+            color: var(--accent-light);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .reference-links a:hover {
+            color: var(--text-primary);
+            text-decoration: underline;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .seeds-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                border-radius: 8px;
+                margin-bottom: 5px;
+                text-align: left;
+            }
+            
+            .output-box {
+                flex-direction: column;
+            }
+            
+            #seed-output {
+                border-radius: 8px 8px 0 0;
+                border-bottom: none;
+            }
+            
+            #copy-btn {
+                border-radius: 0 0 8px 8px;
+                border-left: 2px solid var(--border);
+                border-top: none;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>泰拉瑞亚拼好种</h1>
+        <p>选择你想要的种子效果，系统会自动生成对应的种子代码。每个种子都会为你的世界带来独特的变化！</p>
+    </div>
+    
+    <div class="tabs-container">
+        <div class="tabs" id="tabs">
+            <!-- 标签页按钮将由JavaScript生成 -->
+        </div>
+        
+        <div class="tab-content active" id="spawn">
+            <div class="seeds-grid" id="spawn-seeds">
+                <!-- 出生点相关种子将由JavaScript生成 -->
+            </div>
+        </div>
+        
+        <div class="tab-content" id="mechanic">
+            <div class="seeds-grid" id="mechanic-seeds">
+                <!-- 机制相关种子将由JavaScript生成 -->
+            </div>
+        </div>
+        
+        <div class="tab-content" id="biome">
+            <div class="seeds-grid" id="biome-seeds">
+                <!-- 生物群系生成种子将由JavaScript生成 -->
+            </div>
+        </div>
+        
+        <div class="tab-content" id="structure">
+            <div class="seeds-grid" id="structure-seeds">
+                <!-- 结构生成种子将由JavaScript生成 -->
+            </div>
+        </div>
+        
+        <div class="tab-content" id="worldgen">
+            <div class="seeds-grid" id="worldgen-seeds">
+                <!-- 世界生成种子将由JavaScript生成 -->
+            </div>
+        </div>
+        
+        <div class="tab-content" id="painting">
+            <div class="seeds-grid" id="painting-seeds">
+                <!-- 世界刷漆种子将由JavaScript生成 -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="output-container">
+        <h2>生成的种子代码</h2>
+        <div class="output-box">
+            <textarea id="seed-output" readonly></textarea>
+            <button id="copy-btn">复制代码</button>
+        </div>
+        <div class="selected-count">已选择 <span id="selected-count">0</span> 个种子</div>
+        
+        <div class="reference-links">
+            <h3>参考链接</h3>
+            <ul>
+                <li><a href="https://terraria.wiki.gg/zh/wiki/%E7%A7%98%E5%AF%86%E4%B8%96%E7%95%8C%E7%A7%8D%E5%AD%90" target="_blank">官方WIKI - 秘密世界种子</a></li>
+                <li><a href="https://www.bilibili.com/video/BV1zccwzWEZH" target="_blank">粉史莱姆 - 35个泰拉瑞亚1.4.5隐藏彩蛋种子全盘点！全讲解！</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>泰拉瑞亚拼好种 © 2026 | 这些种子代码适用于泰拉瑞亚 PC 版 1.4.5+</p>
+        <p>本网页数据和提示词由<code>Suimg</code>整理，DeepSeek R1 生成</p>
+    </div>
+
+    <script>
+        // 种子数据
+        const seedsData = {
+            "spawn": {
+                name: "出生点相关",
+                seeds: [
+                    { cn: "随机生成点", en: "random Spawn", desc: "随机出生点 出生点随机", code: "how did i get here" },
+                    { cn: "团队生成点", en: "Team based spawns", desc: "基于团队的出生点 出生点由队伍决定", code: "royale with cheese" }
+                ]
+            },
+            "mechanic": {
+                name: "机制相关",
+                seeds: [
+                    { cn: "开局血月墓地", en: "graveyard Blood moon Start", desc: "进入世界即是血月，地表随机生成墓地", code: "night of the living dead" },
+                    { cn: "开局困难模式", en: "start In Hardmode", desc: "进入世界即是困难模式", code: "too easy" },
+                    { cn: "吸血鬼症", en: "vampirism", desc: "吸血鬼，出生在地底", code: "what a horrible night to have a curse" },
+                    { cn: "雨下整年", en: "rains For A Year", desc: "进入世界，无休止下雨", code: "bring a towel" },
+                    { cn: "无尽万圣", en: "endless Halloween", desc: "进入世界，无尽的万圣节", code: "hocus pocus" },
+                    { cn: "无尽圣诞", en: "endless Christmas", desc: "进入世界，无尽的圣诞节", code: "jingle all the way" },
+                    { cn: "万圣节生成", en: "halloweenGen", desc: "进入世界，部分草地会长南瓜", code: "pumpkin season" }
+                ]
+            },
+            "biome": {
+                name: "生物群系生成",
+                seeds: [
+                    { cn: "无蜘蛛窝", en: "no Spider Caves", desc: "世界里一个蜘蛛洞也没有", code: "arachnophobia" },
+                    { cn: "地表神圣", en: "hallow On The Surface", desc: "地表被神圣化", code: "does that sparkle" },
+                    { cn: "无感染", en: "no Infection", desc: "整个世界被净化", code: "fish mox" },
+                    { cn: "全域感染", en: "world Is Infected", desc: "整个世界被污染", code: "purify this" },
+                    { cn: "沙漠地表", en: "surfaceIs Desert", desc: "地表被沙漠化", code: "sandy britches" },
+                    { cn: "蘑菇地表", en: "surfaceIs Mushrooms", desc: "地表被发光蘑菇化", code: "toadstool" },
+                    { cn: "冰封世界", en: "world Is Frozen", desc: "整个世界被冻结", code: "winter is coming" }
+                ]
+            },
+            "structure": {
+                name: "结构生成",
+                seeds: [
+                    { cn: "巨大废屋", en: "bigger Abandoned Houses", desc: "地下小屋规模变超级大", code: "abandoned manors" },
+                    { cn: "添加传送机", en: "add Teleporters", desc: "世界里随机生成传送机", code: "beam me up" },
+                    { cn: "真没陷阱", en: "actually No Traps", desc: "世界里一个陷阱也没有", code: "more traps please" },
+                    { cn: "彩虹要素", en: "rainbow Stuff", desc: "世界里到处都是彩虹相关物品", code: "rainbow road" },
+                    { cn: "多生命树", en: "extra Living Trees", desc: "生命树生成激增，且规模夸张", code: "save the rainforest" },
+                    { cn: "多漂浮岛", en: "extra Floating Is lands", desc: "空岛数量暴增", code: "the care bears movie" },
+                    { cn: "处处臭臭", en: "poo Everywhere", desc: "整个世界都是便便", code: "truck stop" },
+                    { cn: "宝箱传送枪", en: "portal Gun In Chests", desc: "宝箱里概率包含传送枪", code: "we don't even test for that" },
+                    { cn: "对偶地牢", en: "dual Dungeons", desc: "双地牢，且形成地下城", code: "double daring dangers" }
+                ]
+            },
+            "worldgen": {
+                name: "世界生成",
+                seeds: [
+                    { cn: "多洞世界", en: "dig Extra Holes", desc: "整个世界层布满深坑", code: "jagged rocks" },
+                    { cn: "无地表", en: "no Surface", desc: "出生在地底，地表层被填满", code: "mole people" },
+                    { cn: "多液世界", en: "extra Liquid", desc: "整个世界被变成水上乐园", code: "waterpark" },
+                    { cn: "圆形地块", en: "round Landmasses", desc: "整个世界变成行星岛屿", code: "planetoids" },
+                    { cn: "太空地表", en: "surface Is In Space", desc: "世界海拔极高，地表接近太空", code: "such great heights" },
+                    { cn: "错误世界", en: "error World", desc: "整个世界乱成一团，像个错误", code: "i am error" }
+                ]
+            },
+            "painting": {
+                name: "世界刷漆",
+                seeds: [
+                    { cn: "灰度世界", en: "paint Everything Gray", desc: "所有图格都被涂上灰色漆", code: "monochrome" },
+                    { cn: "反色世界", en: "paint Everything Negative", desc: "所有图格都被涂上反色漆", code: "negative infinity" },
+                    { cn: "夜明世界", en: "coat Everything Illuminant", desc: "所有图格都被涂上夜明漆", code: "xray vision" },
+                    { cn: "回声世界", en: "coat Everything Echo", desc: "所有图格都被涂上回声漆", code: "invisible plane" }
+                ]
+            }
+        };
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 生成标签页
+            const tabsContainer = document.getElementById('tabs');
+            const categoryIds = Object.keys(seedsData);
+            
+            categoryIds.forEach((categoryId, index) => {
+                const category = seedsData[categoryId];
+                const tabButton = document.createElement('button');
+                tabButton.className = 'tab' + (index === 0 ? ' active' : '');
+                tabButton.textContent = category.name;
+                tabButton.setAttribute('data-tab', categoryId);
+                
+                tabButton.addEventListener('click', function() {
+                    // 移除所有标签的active类
+                    document.querySelectorAll('.tab').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    
+                    // 隐藏所有内容
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // 激活当前标签
+                    this.classList.add('active');
+                    
+                    // 显示对应内容
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+                
+                tabsContainer.appendChild(tabButton);
+            });
+            
+            // 生成种子选项
+            categoryIds.forEach(categoryId => {
+                const category = seedsData[categoryId];
+                const seedsContainer = document.getElementById(categoryId + '-seeds');
+                
+                category.seeds.forEach(seed => {
+                    const seedItem = document.createElement('div');
+                    seedItem.className = 'seed-item';
+                    
+                    seedItem.innerHTML = `
+                        <label class="seed-checkbox">
+                            <input type="checkbox" value="${seed.code}" data-category="${categoryId}">
+                            <div class="seed-info">
+                                <h3>${seed.cn}</h3>
+                                <div class="english-name">${seed.en}</div>
+                                <div class="description">${seed.desc}</div>
+                                <div class="code">${seed.code}</div>
+                            </div>
+                        </label>
+                    `;
+                    
+                    seedsContainer.appendChild(seedItem);
+                });
+            });
+            
+            // 初始化输出框
+            updateSeedOutput();
+            
+            // 为所有复选框添加事件监听
+            document.querySelectorAll('.seed-checkbox input').forEach(checkbox => {
+                checkbox.addEventListener('change', updateSeedOutput);
+            });
+            
+            // 复制按钮功能
+            document.getElementById('copy-btn').addEventListener('click', function() {
+                const outputText = document.getElementById('seed-output').value;
+                
+                if (outputText.trim() === '') {
+                    alert('请先选择至少一个种子！');
+                    return;
+                }
+                
+                navigator.clipboard.writeText(outputText).then(() => {
+                    // 复制成功反馈
+                    const originalText = this.textContent;
+                    this.textContent = '已复制！';
+                    this.style.backgroundColor = '#4A7C59';
+                    
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.style.backgroundColor = '';
+                    }, 1500);
+                }).catch(err => {
+                    console.error('复制失败: ', err);
+                    alert('复制失败，请手动选择并复制文本。');
+                });
+            });
+        });
+        
+        // 更新种子输出
+        function updateSeedOutput() {
+            const selectedCheckboxes = document.querySelectorAll('.seed-checkbox input:checked');
+            const selectedCodes = Array.from(selectedCheckboxes).map(cb => cb.value);
+            
+            // 更新计数
+            document.getElementById('selected-count').textContent = selectedCheckboxes.length;
+            
+            // 生成输出文本，使用 | 分隔
+            const outputText = selectedCodes.join('|');
+            document.getElementById('seed-output').value = outputText;
+        }
+    </script>
+</body>
+</html>
